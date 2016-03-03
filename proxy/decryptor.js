@@ -20,6 +20,10 @@ function getIv() {
 }
 
 function _decrypt(msg) {
+    if (!msg) {
+        return new Buffer(0);
+    }
+
     const buffer = new Buffer(msg, 'base64');
     const decipher = crypto.createDecipheriv('AES-128-CBC', key, getIv());
 

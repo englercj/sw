@@ -5,6 +5,7 @@ require('dotenv').load({ path: '../.env' });
 const http  = require('http');
 const url   = require('url');
 const Buffer = require('buffer').Buffer;
+const decrypt = require('./decryptor');
 
 // create a new http proxy server
 // req - http.IncomingMessage
@@ -58,7 +59,12 @@ server.listen(process.env.PORT || 8080, '0.0.0.0');
 console.log('Server listening...');
 
 function requestComplete(req, reqBody, res, resBody) {
-    console.log('REQUEST:\n', req.method, req.url, '\n', req.headers, '\n\n', reqBody.toString());
-    console.log('\nRESPONSE:\n', res.headers, '\n\n', resBody.toString());
+    console.log('REQUEST:\n', req.method, req.url, '\n', req.headers, '\n');
+    const reqBodyStr = decrypt.decryptRequest(reqBody.toString()).toString();
+    console.log(reqBodyStr ? JSON.parse(reqBodyStr) : '');
+
+    console.log('\nRESPONSE:\n', res.headers, '\n');
+    const resBodyStr = decrypt.decryptResponse(resBody.toString()).toString();
+    console.log(resBodyStr ? JSON.parse(resBodyStr) : '');
     console.log('-----------------------------------');
 }
